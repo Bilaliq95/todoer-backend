@@ -7,6 +7,9 @@ const port = process.env.PORT || 3002;
 app.use(cookieParser());
 app.use(express.json());
 
+console.log('CORS_ALLOWED_ORIGIN=', process.env.CORS_ALLOWED_ORIGIN);
+
+
 app.use(cors({
     origin: process.env.CORS_ALLOWED_ORIGIN,  // your React frontend origin
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // allowed HTTP methods
