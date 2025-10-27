@@ -7,19 +7,13 @@ const port = process.env.PORT || 3002;
 app.use(cookieParser());
 app.use(express.json());
 
-console.log('CORS_ALLOWED_ORIGIN=', process.env.CORS_ALLOWED_ORIGIN);
 
 
-const corsOptions = {
-    origin: process.env.CORS_ALLOWED_ORIGIN,   // "http://localhost:3000"
-    credentials: true,
-    methods: ['GET','POST','PUT','DELETE','OPTIONS'],
-    allowedHeaders: ['Content-Type','Authorization'],
-};
-
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
-
+app.use(cors({
+    origin: process.env.CORS_ALLOWED_ORIGIN,  // your React frontend origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // allowed HTTP methods
+    credentials: true // if you use cookies or auth headers
+}));
 // Import user routes
 const userRoutes = require('./routes/userRoutes');
 app.use('/users', userRoutes);
