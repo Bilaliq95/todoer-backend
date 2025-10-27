@@ -10,14 +10,15 @@ app.use(express.json());
 console.log('CORS_ALLOWED_ORIGIN=', process.env.CORS_ALLOWED_ORIGIN);
 
 
-app.use(cors({
-    origin: process.env.CORS_ALLOWED_ORIGIN,
-    methods: ['GET','POST','PUT','DELETE','OPTIONS'], // add OPTIONS
+const corsOptions = {
+    origin: process.env.CORS_ALLOWED_ORIGIN,   // "http://localhost:3000"
     credentials: true,
-    allowedHeaders: ['Content-Type','Authorization']   // safe default
-}));
+    methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+    allowedHeaders: ['Content-Type','Authorization'],
+};
 
-app.options('*', cors({ origin: process.env.CORS_ALLOWED_ORIGIN, credentials: true }));
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // Import user routes
 const userRoutes = require('./routes/userRoutes');
