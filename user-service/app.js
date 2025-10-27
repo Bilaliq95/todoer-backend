@@ -11,10 +11,14 @@ console.log('CORS_ALLOWED_ORIGIN=', process.env.CORS_ALLOWED_ORIGIN);
 
 
 app.use(cors({
-    origin: process.env.CORS_ALLOWED_ORIGIN,  // your React frontend origin
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // allowed HTTP methods
-    credentials: true // if you use cookies or auth headers
+    origin: process.env.CORS_ALLOWED_ORIGIN,
+    methods: ['GET','POST','PUT','DELETE','OPTIONS'], // add OPTIONS
+    credentials: true,
+    allowedHeaders: ['Content-Type','Authorization']   // safe default
 }));
+
+app.options('*', cors({ origin: process.env.CORS_ALLOWED_ORIGIN, credentials: true }));
+
 // Import user routes
 const userRoutes = require('./routes/userRoutes');
 app.use('/users', userRoutes);
