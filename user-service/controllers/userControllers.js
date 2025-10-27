@@ -1,5 +1,4 @@
 const client = require("../dynamoClient"); // adjust path if needed
-const { users } = require('../models/userModels');// or '../data/userData'
 const { PutItemCommand, DeleteItemCommand, GetItemCommand, QueryCommand} = require("@aws-sdk/client-dynamodb");
 const { v4: uuidv4 } = require("uuid");
 const { unmarshall } = require("@aws-sdk/util-dynamodb");
@@ -12,7 +11,7 @@ const register = async (req, res) => {
     const user_id = uuidv4();
 try{
     const qcommand = new QueryCommand({
-            TableName: "users",
+            TableName: process.env.DYNAMODB_USERS_TABLE,
             IndexName: "email-index",
             KeyConditionExpression: "email = :email",
             ExpressionAttributeValues: {
@@ -24,7 +23,7 @@ try{
         return res.status(400).json({ message: 'User Already Exists.' });
     }
         const pcommand = new PutItemCommand({
-            TableName: "users",
+            TableName: process.env.DYNAMODB_USERS_TABLE,
             Item: {
                 user_id: {S: user_id},
                 email: {S: email},
@@ -49,7 +48,7 @@ const login = async (req, res) => {
     const { email, password } = req.body;
     try{
         const command = new QueryCommand({
-            TableName: "users",
+            TableName: process.env.DYNAMODB_USERS_TABLE,
             IndexName: "email-index",
             KeyConditionExpression: "email = :email",
             FilterExpression: "password = :password",
@@ -63,7 +62,6 @@ const login = async (req, res) => {
             return res.status(404).json({ message: "User not found." });
         }
         const user = unmarshall(result.Items[0]);
-        console.log(user);
         //Need to inject here
         const accessToken = jwt.sign(
             {user_id: user.user_id, name: user.name, email: user.email, role: 'user' },
@@ -106,7 +104,6 @@ const login = async (req, res) => {
 }
 
 const logout = (req, res) => {
-    console.log("Now in logout");
     const isProd = process.env.NODE_ENV === 'production';
 
     res.cookie('accessToken', '', {
@@ -130,7 +127,6 @@ const logout = (req, res) => {
 
 
 const validateAccessToken = (req, res) => {
-    console.log('Now in Validate Backend');
     const accessToken = req.cookies.accessToken;
     if (!accessToken) {
         return res.status(401).json({ message: "No token provided" });
@@ -153,7 +149,6 @@ const validateAccessToken = (req, res) => {
 
 
 const refreshAccessToken = async (req, res, next) => {
-    console.log('Now in Refresh Token');
     const isProd = process.env.NODE_ENV === 'production';
 
     const refreshToken = req.cookies.refreshToken;

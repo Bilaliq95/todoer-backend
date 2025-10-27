@@ -20,7 +20,7 @@ const createTask=async(req,res,next)=>{
             task_id,user_id,date_created,description,
         }
         const command = new PutItemCommand({
-            TableName: "tasks",
+            TableName: process.env.DYNAMODB_TASKS_TABLE,
             Item: {
                 task_id: {S: task_id},
                 user_id: {S: user_id},
@@ -33,7 +33,7 @@ const createTask=async(req,res,next)=>{
         });
         await client.send(command);
         await snsClient.send(new PublishCommand({
-            TopicArn: "arn:aws:sns:ca-central-1:603195190042:task-events",
+            TopicArn: process.env.SNS_TOPIC_ARN,
             Message: JSON.stringify({task_id,description,date_created,user_id}),
         }));
         return res.status(201).json({message: 'Task created successfully.', newTask});
@@ -58,7 +58,7 @@ const updateTask=async(req,res,next)=>{
     }
     try{
         const command= new PutItemCommand({
-            TableName: "tasks",
+            TableName: process.env.DYNAMODB_TASKS_TABLE,
             Item:selectedTask
         })
         await client.send(command);
@@ -79,7 +79,7 @@ const deleteTask=async(req,res,next)=>{
  const task_id=req.params.id;
     try{
         const command = new DeleteItemCommand({
-            TableName: "tasks",
+            TableName: process.env.DYNAMODB_TASKS_TABLE,
             Key: {
                 task_id: { S: task_id }
             }
@@ -98,7 +98,7 @@ const getTask=async(req,res,next)=>{
     const task_id=req.params.id;
     try{
         const command = new GetItemCommand({
-            TableName: "tasks",
+            TableName: process.env.DYNAMODB_TASKS_TABLE,
             Key: {
                 task_id: { S: task_id }
             }
@@ -117,7 +117,7 @@ const getTask=async(req,res,next)=>{
 
 const getAllTasks=async(req,res,next)=>{
     const command = new ScanCommand({
-        TableName: "tasks"
+        TableName: process.env.DYNAMODB_TASKS_TABLE
     });
     const result = await client.send(command);
     if (!result.Items) {
@@ -130,7 +130,7 @@ const getTasksByUser=async(req,res,next)=>{
     const user_id=req.params.userId;
     try{
         const command = new QueryCommand({
-            TableName: "tasks",
+            TableName: process.env.DYNAMODB_TASKS_TABLE,
             IndexName: "user_id-index",
             KeyConditionExpression: "user_id = :uid",
             ExpressionAttributeValues: {
@@ -145,7 +145,7 @@ const getTasksByUser=async(req,res,next)=>{
         return res.status(200).json({ tasks:plainItems, message: "Tasks retrieved successfully." });
     }
     catch(err){
-        console.error("Error deleting task:", err);
+        console.error("Error getting tasks:", err);
         return res.status(500).json({ error: "Internal Server Error" });
     }
 

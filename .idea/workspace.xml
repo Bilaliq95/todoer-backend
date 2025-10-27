@@ -5,8 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="17c76162-5c58-4abf-b8fe-ff46917af4b4" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/task-service/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/task-service/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/task-service/controllers/taskControllers.js" beforeDir="false" afterPath="$PROJECT_DIR$/task-service/controllers/taskControllers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/task-service/dynamoClient.js" beforeDir="false" afterPath="$PROJECT_DIR$/task-service/dynamoClient.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/task-service/models/taskModels.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/task-service/snsClient.js" beforeDir="false" afterPath="$PROJECT_DIR$/task-service/snsClient.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/controllers/userControllers.js" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/controllers/userControllers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/dynamoClient.js" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/dynamoClient.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/models/userModels.js" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,6 +43,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "ts.external.directory.path": "/Applications/WebStorm.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -53,7 +62,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1761076578327</updated>
-      <workItem from="1761076579658" duration="4018000" />
+      <workItem from="1761076579658" duration="15437000" />
     </task>
     <servers />
   </component>
