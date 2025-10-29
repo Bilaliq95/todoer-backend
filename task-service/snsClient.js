@@ -6,3 +6,6 @@ const snsClient = new SNSClient({
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
     }
 });
+
+
+module.exports = snsClient; // ← important
