@@ -34,7 +34,13 @@ const createTask=async(req,res,next)=>{
         await client.send(command);
         await snsClient.send(new PublishCommand({
             TopicArn: process.env.SNS_TOPIC_ARN,
-            Message: JSON.stringify({task_id,description,date_created,user_id}),
+            Message: JSON.stringify({
+                eventType: "TASK_CREATED",
+                task_id,
+                description,
+                date_created,
+                user_id,
+            }),
         }));
         return res.status(201).json({message: 'Task created successfully.', newTask});
     }
@@ -76,6 +82,7 @@ const updateTask=async(req,res,next)=>{
 }
 
 const deleteTask=async(req,res,next)=>{
+    const {user_id} = req.body;
  const task_id=req.params.id;
     try{
         const command = new DeleteItemCommand({
@@ -85,6 +92,15 @@ const deleteTask=async(req,res,next)=>{
             }
         })
         await client.send(command);
+        // after: await client.send(command);
+        await snsClient.send(new PublishCommand({
+            TopicArn: process.env.SNS_TOPIC_ARN,
+            Message: JSON.stringify({
+                eventType: "TASK_DELETED",
+                task_id,
+                user_id,
+            }),
+        }));
         return res.status(200).json({ message: "Task deleted successfully." });
     }
     catch(err){

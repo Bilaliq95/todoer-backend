@@ -136,11 +136,6 @@ const validateAccessToken = (req, res) => {
         if (err) {
             return res.status(401).json({ message: "Invalid or expired token" });
         }
-
-
-
-
-
         // Return minimal user info for the frontend
         return res.status(200).json({
             user: {
