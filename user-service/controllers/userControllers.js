@@ -64,7 +64,7 @@ const login = async (req, res) => {
         const user = unmarshall(result.Items[0]);
         //Need to inject here
         const accessToken = jwt.sign(
-            {user_id: user.user_id, name: user.name, email: user.email, role: 'user' },
+            {user_id: user.user_id, name: user.name, email: user.email, role: 'user',task_count: user.task_count },
             process.env.JWT_SECRET,
             { expiresIn: '15m' }
         );
@@ -136,12 +136,18 @@ const validateAccessToken = (req, res) => {
         if (err) {
             return res.status(401).json({ message: "Invalid or expired token" });
         }
+
+
+
+
+
         // Return minimal user info for the frontend
         return res.status(200).json({
             user: {
                 user_id: payload.user_id,
                 name: payload.name,   // see note below
                 email: payload.email, // see note below
+                task_count: payload.task_count,
             }
         });
     });
