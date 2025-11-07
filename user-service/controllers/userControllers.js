@@ -148,34 +148,55 @@ const validateAccessToken = (req, res) => {
 };
 
 
-const refreshAccessToken = async (req, res, next) => {
-    const isProd = process.env.NODE_ENV === 'production';
-
+const refreshAccessToken = async (req, res) => {
+    const isProd = process.env.NODE_ENV === "production";
     const refreshToken = req.cookies.refreshToken;
-    if (!refreshToken) {
-        return res.status(401).json({ message: "No token provided" });
-    }
+    if (!refreshToken) return res.status(401).json({ message: "No token provided" });
 
-    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, payload) => {
-        if (err) {
-            return res.status(401).json({ message: "Invalid or expired token" });
+    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err, payload) => {
+        if (err) return res.status(401).json({ message: "Invalid or expired token" });
+
+        try {
+            // 1) fetch user by primary key (user_id is your partition key)
+            const getCmd = new GetItemCommand({
+                TableName: process.env.DYNAMODB_USERS_TABLE,
+                Key: { user_id: { S: payload.user_id } },
+                // project only what you need
+                ProjectionExpression: "user_id, #n, email",
+                ExpressionAttributeNames: { "#n": "name" },
+            });
+
+            const getRes = await client.send(getCmd);
+            if (!getRes.Item) return res.status(401).json({ message: "User not found" });
+
+            const user = unmarshall(getRes.Item);
+
+            // 2) mint access token with the SAME claims as login
+            const accessToken = jwt.sign(
+                {
+                    user_id: user.user_id,
+                    name: user.name,
+                    email: user.email,
+                    role: "user",
+                },
+                process.env.JWT_SECRET,
+                { expiresIn: "15m" }
+            );
+
+            // 3) set cookie
+            res.cookie("accessToken", accessToken, {
+                httpOnly: true,
+                secure: isProd,
+                sameSite: isProd ? "none" : "lax",
+                path: "/",
+                maxAge: 15 * 60 * 1000,
+            });
+
+            return res.status(200).json({ ok: true });
+        } catch (e) {
+            console.error("Refresh error:", e);
+            return res.status(500).json({ message: "Internal Server Error" });
         }
-
-        const accessToken = jwt.sign(
-            { user_id: payload.user_id, role: 'user' },
-            process.env.JWT_SECRET,
-            { expiresIn: '15m' }
-        );
-
-        res.cookie('accessToken', accessToken, {
-            httpOnly: true,
-            secure: isProd,
-            sameSite: isProd ? 'none' : 'lax',
-            path: '/',
-            maxAge: 15 * 60 * 1000
-        });
-
-        return res.status(200).json({ ok: true });
     });
 };
 
